@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image, SafeAreaView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 export default function HomeScreen({ navigation }) {
@@ -14,14 +15,27 @@ export default function HomeScreen({ navigation }) {
       .catch(error => console.error('Error fetching products:', error));
   }, []);
 
+  const addToCart = async (product) => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('cart');
+      let cart = jsonValue != null ? JSON.parse(jsonValue) : [];
+      cart.push(product);
+      await AsyncStorage.setItem('cart', JSON.stringify(cart));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
-   <SafeAreaView>
+   <SafeAreaView style={styles.container}>
      <View style={styles.header}>
-        <Image source={require('../assets/Menu.png')}/>
+     <TouchableOpacity onPress={() => navigation.openDrawer()}>
+        <Image source={require('../assets/Menu.png')} style={{ width: 30, height: 30, marginLeft: 10 }} />
+      </TouchableOpacity>
         <Image style={styles.logo} source={require('../assets/Logo.png')}/>
         <View style={styles.searchShop}>
         <Image source={require('../assets/Search.png')}/>
-        <TouchableOpacity onPress={() => navigation.navigate('Cart')} style={{marginLeft: 10}}>
+        <TouchableOpacity onPress={() => navigation.navigate('CartScreen')} style={{marginLeft: 10}}>
             <Image source={require('../assets/shopping bag.png')}/>
           </TouchableOpacity>
         </View>
@@ -60,19 +74,18 @@ export default function HomeScreen({ navigation }) {
           </View>
         </TouchableOpacity>
       )}
+      numColumns={2}
+      showsVerticalScrollIndicator={false}
     />
    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  item: {
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  title: {
-    fontSize: 18,
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    padding:10
   },
   header: {
     flexDirection: 'row',
@@ -91,10 +104,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 15
   },
-  subHeaderText: {
-    fontSize: 24,
-    fontWeight: 200,
-    letterSpacing: 2
+  filterList: {
+    flexDirection: 'row'
+  },
+  filter: {
+    width: 40,
+    height: 40,
+    marginRight: 10,
+    backgroundColor: '#f0f0f0',
+    alignItems: 'center',
+    borderRadius: 20,
+    justifyContent: 'center'
   },
   productContainer: {
     flex: 1,
