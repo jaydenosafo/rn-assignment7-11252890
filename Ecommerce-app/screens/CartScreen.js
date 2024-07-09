@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, FlatList, StyleSheet, Image, TouchableOpacity, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 const CartScreen = ({ navigation }) => {
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -119,6 +120,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    marginTop: 30
   },
   header: {
     fontSize: 24,
