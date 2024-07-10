@@ -4,9 +4,9 @@ import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawe
 
 export default function CustomDrawerContent(props) {
   return (
-    <DrawerContentScrollView {...props}>
+    <DrawerContentScrollView {...props} style={{fontSize: 30}}>
       <TouchableOpacity onPress={() => props.navigation.closeDrawer()}>
-      <Image source={require('../assets/Close.png')} style={{marginLeft: 10}}/>
+      <Image source={require('../assets/Close.png')} style={{marginLeft: 10,marginTop: 10, height: 30}}/>
       </TouchableOpacity>
       <View style={styles.header}>
         <Text style={styles.headerText}>ERIC ATSU</Text>
@@ -20,8 +20,6 @@ export default function CustomDrawerContent(props) {
 const styles = StyleSheet.create({
   header: {
     padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
   },
   headerText: {
     fontSize: 24,

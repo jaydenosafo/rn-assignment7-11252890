@@ -17,12 +17,7 @@ function DrawerNavigator() {
     <Drawer.Navigator 
       initialRouteName="HomeDrawer" 
       drawerContent={(props) => <CustomDrawerContent {...props} />}
-      screenOptions={{
-        drawerStyle: styles.drawer,
-        drawerLabelStyle: styles.drawerLabel,
-        drawerActiveTintColor: '#000',
-        drawerInactiveTintColor: '#333',
-      }}
+      screenOptions={{headerShown: false}}
     >
       <Drawer.Screen name="Store" component={HomeScreen} />
       <Drawer.Screen name="Locations" component={HomeScreen} />
