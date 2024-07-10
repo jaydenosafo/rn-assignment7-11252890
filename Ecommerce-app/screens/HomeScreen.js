@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     },
     addToCartButton: {
         position: 'absolute',
-        bottom: 10,
+        bottom: 5,
         right: 10,
     },
     textContainer: {

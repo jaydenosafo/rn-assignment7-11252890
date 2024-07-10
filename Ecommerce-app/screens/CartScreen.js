@@ -74,6 +74,7 @@ const CartScreen = ({ navigation }) => {
         <Image style={styles.search} source={require('../assets/Search.png')}/>
       </View>
       <Text style={styles.header}>CHECKOUT</Text>
+      <View style={styles.line}/>
       <FlatList
         data={cartItems}
         keyExtractor={(item) => item.id}
@@ -129,6 +130,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center'
+  },
+  line: {
+    height: 1,
+    backgroundColor: '#ccc',
+    width: '50%',
+    marginTop: 10,
+    alignItems: 'center',
+    marginLeft: 100
   },
   cartItem: {
     flexDirection: 'row',

@@ -97,7 +97,7 @@ export default function ProductDetailScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 15
+    marginTop: 20
   },
   itemContainer: {
     padding: 20,
@@ -137,10 +137,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleExport: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    marginTop: 10
   },
   export: {
-    top: 20
+    top: 15,
+    left: 70
   },
   sectionTitle: {
     fontSize: 18,
@@ -199,7 +201,7 @@ const styles = StyleSheet.create({
   },
   checkoutText: {
     fontSize: 20,
-    marginRight: 200,
+    marginRight: 180,
     color: 'white'
   },
   shoppingBag: {
@@ -207,5 +209,6 @@ const styles = StyleSheet.create({
   },
   heart: {
     tintColor: 'white',
+    marginRight: 15
   }
 });
