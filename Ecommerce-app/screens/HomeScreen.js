@@ -1,162 +1,185 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image, SafeAreaView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, FlatList } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
 
-export default function HomeScreen({ navigation }) {
-  const [products, setProducts] = useState([]);
+const HomePage = ({ navigation }) => {
+    const [data, setData] = useState([]);
+    const [cart, setCart] = useState([]); // Define state for cart
 
-  useEffect(() => {
-    fetch('https://fakestoreapi.com/products')
-      .then(res => res.json())
-      .then(data => {
-        setProducts(data);
-      })
-      .catch(error => console.error('Error fetching products:', error));
-  }, []);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('https://fakestoreapi.com/products');
+                const result = await response.json();
+                setData(result);
+            } catch (error) {
+                console.error("Failed to fetch data from API:", error);
+            }
+        };
 
-  const addToCart = async (product) => {
-    try {
-      const jsonValue = await AsyncStorage.getItem('cart');
-      let cart = jsonValue != null ? JSON.parse(jsonValue) : [];
-      cart.push(product);
-      await AsyncStorage.setItem('cart', JSON.stringify(cart));
-    } catch (e) {
-      console.error(e);
-    }
-  };
+        fetchData();
 
-  return (
-   <SafeAreaView style={styles.container}>
-     <View style={styles.header}>
-     <TouchableOpacity onPress={() => navigation.openDrawer()}>
-        <Image source={require('../assets/Menu.png')} style={{ width: 30, height: 30, marginLeft: 10 }} />
-      </TouchableOpacity>
-        <Image style={styles.logo} source={require('../assets/Logo.png')}/>
-        <View style={styles.searchShop}>
-        <Image source={require('../assets/Search.png')}/>
-        <TouchableOpacity onPress={() => navigation.navigate('CartScreen')} style={{marginLeft: 10}}>
-            <Image source={require('../assets/shopping bag.png')}/>
-          </TouchableOpacity>
-        </View>
-      </View>
+        const fetchCart = async () => {
+            try {
+                const savedCart = await AsyncStorage.getItem('cart');
+                if (savedCart) {
+                    setCart(JSON.parse(savedCart));
+                }
+            } catch (error) {
+                console.error("Failed to load cart from local storage:", error);
+            }
+        };
 
-      <View style={styles.subHeader}>
-          <Text style={styles.subHeaderText}>OUR STORY</Text>
-          <View style={styles.filterList}>
-            <View style={styles.filter}>
-            <Image source={require('../assets/Listview.png')}/>
-          </View>
-          <View style={styles.filter}>
-          <Image source={require('../assets/Filter.png')}/>
-          </View>
-          </View>
-          
-      </View>
+        fetchCart();
+    }, []);
 
-    <FlatList
-      data={products}
-      keyExtractor={item => item.id.toString()}
-      renderItem={({ item }) => (
-        <TouchableOpacity onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}>
-          <View style={styles.productContainer}>
-           <View style={styles.product}>
-           <Image source={item.image} style={styles.productImage} resizeMode='contain' />
-            <TouchableOpacity onPress={() => addToCart(item)} style={styles.addToCartButton}>
-                <Image source={require('../assets/add_circle.png')}/>
-            </TouchableOpacity>
-           </View>
-            <View style={styles.productDetails}>
-              <Text style={styles.productTitle}>{item.title}</Text>
-              <Text style={styles.productDescription}>{item.description}</Text>
-              <Text style={styles.productPrice}>${item.price}</Text>
+    const addToCart = async (product) => {
+        try {
+            const jsonValue = await AsyncStorage.getItem('cart');
+            let cart = jsonValue != null ? JSON.parse(jsonValue) : [];
+            cart.push(product);
+            await AsyncStorage.setItem('cart', JSON.stringify(cart));
+            setCart(cart); 
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const renderItem = ({ item }) => {
+        return (
+            <View style={styles.card}>
+              <TouchableOpacity onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}>
+              <Image source={{ uri: item.image }} style={styles.cardImage} />
+                <View style={styles.textContainer}>
+                    <Text style={styles.titleText}>{item.title}</Text>
+                    <Text style={styles.descriptionText}>{item.description}</Text>
+                    <Text style={styles.priceText}>${item.price}</Text>
+                </View>
+                <TouchableOpacity onPress={() => addToCart(item)} style={styles.addToCartButton}>
+                    <Image source={require('../assets/add_circle.png')} />
+                </TouchableOpacity>
+              </TouchableOpacity>
+               
             </View>
-          </View>
-        </TouchableOpacity>
-      )}
-      numColumns={2}
-      showsVerticalScrollIndicator={false}
-    />
-   </SafeAreaView>
-  );
-}
+        );
+    };
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <View style={styles.Navbar}>
+            <TouchableOpacity onPress={() => navigation.openDrawer()}>
+         <Image source={require('../assets/Menu.png')} style={{ width: 30, height: 30, marginLeft: 10 }} />
+       </TouchableOpacity>
+                <Image source={require('../assets/Logo.png')} />
+                <View style={styles.flex}>
+                    <Image source={require('../assets/Search.png')} />
+                    <TouchableOpacity onPress={() => navigation.navigate('CartScreen')} style={{marginLeft: 10}}>
+                        <Image source={require('../assets/shopping bag.png')} />
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            <View style={styles.Header}>
+                <Text style={styles.headerText}>OUR STORY</Text>
+                <View style={styles.circle}>
+                    <TouchableOpacity>
+                        <Image source={require('../assets/Listview.png')} />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.circle2}>
+                    <TouchableOpacity>
+                        <Image source={require('../assets/Filter.png')} />
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            <FlatList
+                data={data}
+                renderItem={renderItem}
+                keyExtractor={item => item.id.toString()}
+                numColumns={2}
+                columnWrapperStyle={styles.column}
+                contentContainerStyle={styles.layout}
+                showsVerticalScrollIndicator={false}
+            />
+        </SafeAreaView>
+    );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding:10
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20
-  },
-  searchShop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  subHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 15
-  },
-  filterList: {
-    flexDirection: 'row'
-  },
-  filter: {
-    width: 40,
-    height: 40,
-    marginRight: 10,
-    backgroundColor: '#f0f0f0',
-    alignItems: 'center',
-    borderRadius: 20,
-    justifyContent: 'center'
-  },
-  productContainer: {
-    flex: 1,
-    paddingBottom: 10,
-    paddingHorizontal:10,
-    width: "100%",
-  },
-  product : {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-  },
-  productImage: {
-    width: '100%',
-    flex: 1,
-    resizeMode: 'contain',  
-  },
-  productDetails: {
-    padding: 5,
-  },
-  productTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  productDescription: {
-    fontSize: 14,
-  },
-  productPrice: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#D39679'
-  },
-  addToCartButton: {
-    borderRadius: 5,
-    alignItems: 'center',
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    top: 190,
-    width: 50,
-    height: 50,
-  },
+    container: {
+        flex: 1,
+        margin: 20,
+    },
+    Navbar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    flex: {
+        flexDirection: 'row',
+    },
+    Header: {
+        marginTop: 20,
+        flexDirection: 'row',
+    },
+    headerText: {
+        fontSize: 32,
+        fontWeight: '400',
+    },
+    circle: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#F9F9F9',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 'auto',
+    },
+    circle2: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#F9F9F9',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 14,
+    },
+    layout: {
+        marginTop: 20,
+    },
+    column: {
+        justifyContent: 'space-between',
+    },
+    card: {
+        position: 'relative',
+        width: '48%',
+        marginBottom: 20,
+    },
+    cardImage: {
+        width: '100%',
+        height: 200,
+    },
+    addToCartButton: {
+        position: 'absolute',
+        bottom: 10,
+        right: 10,
+    },
+    textContainer: {
+        marginTop: 10,
+    },
+    titleText: {
+        fontSize: 16,
+        fontWeight: '500',
+    },
+    descriptionText: {
+        fontSize: 12,
+    },
+    priceText: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#DAA06D',
+    },
 });
+
+export default HomePage;

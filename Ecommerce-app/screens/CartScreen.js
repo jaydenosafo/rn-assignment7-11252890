@@ -79,7 +79,7 @@ const CartScreen = ({ navigation }) => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.cartItem}>
-            <Image source={item.image} style={styles.itemImage} />
+            <Image source={{uri: item.image}} style={styles.itemImage} />
             <View style={styles.itemDetails}>
               <Text style={styles.itemName}>{item.title}</Text>
               <Text style={styles.itemDescription}>{item.description}</Text>
